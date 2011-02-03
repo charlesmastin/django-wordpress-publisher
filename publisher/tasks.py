@@ -70,7 +70,7 @@ def transfer_post(post_id):
         'MEDIA_URL': settings.MEDIA_URL,
     })
     
-    send_email('New Blog Post Submission', html_content, [settings.WORDPRESS['EDITORIAL_EMAIL']])
+    send_email('New Blog Post Submission', html_content, [settings.WORDPRESS['ADMIN_EMAIL']])
     
     return True
 
