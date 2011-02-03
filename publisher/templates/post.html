@@ -40,6 +40,13 @@
 			{{ form.categories|safe }}
 			{% endblock %}
 			{% endif %}
+			
+			{% if WORDPRESS.ALLOW_TAGS %}
+			{% block tags %}
+			<h2>Tags</h2>
+			{{ form.tags|safe }}
+			{% endblock %}
+			{% endif %}
 		</div>
 	
 		<div class="unit size1of4 slim">
@@ -52,14 +59,6 @@
 			<a href="#" class="another">Add Another</a>
 			{% endblock %}
 			{% endif %}
-			
-			{% if WORDPRESS.ALLOW_TAGS %}
-			{% block tags %}
-			<h2>Tags</h2>
-			{{ form.tags|safe }}
-			{% endblock %}
-			{% endif %}
-			
 		</div>
 	</div>
 	<input type="submit" value="Submit your post" id="submit" />
