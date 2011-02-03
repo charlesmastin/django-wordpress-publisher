@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>{% block title %}{% endblock %}</title>
+	<link href="{{ MEDIA_URL }}css/libraries.css" media="screen" rel="stylesheet" />
+	<link href="{{ MEDIA_URL }}css/grids.css" media="screen" rel="stylesheet" />
+	<link href="{{ MEDIA_URL }}css/master.css" media="screen" rel="stylesheet" />
+	{% block extra_head %}
+	<link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.png" />
+	{% endblock %}
+</head>
+{% block body %}
+<body>
+	<div id="page">
+		
+		{% block header %}
+		<h1 id="logo"></h1>
+		{% endblock %}
+		
+		{% if messages %}
+		<div class="messages">
+			{% for message in messages %}
+			<p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</p>
+			{% endfor %}
+		</div>
+		{% endif %}
+		
+		<div id="content">
+			{% block content %}
+			{% endblock %}
+		</div>
+	
+	</div>
+	
+	{% block footer %}
+	
+	{% endblock %}
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.labelify.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.validate.min.js"></script>
+	
+	{% block scripts %}
+	{% endblock %}
+
+</body>
+{% endblock %}

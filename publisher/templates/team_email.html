@@ -1,0 +1,30 @@
+{% extends "base_email.html" %}
+{% block content %}
+<p>Hey blog team… there is a new blog post awaiting your editorial input.</p>
+
+<dl>
+	<dt>Submitted by</dt>
+	<dd>{{ post.email }}</dd>
+	<dt>Date</dt>
+	<dd>{{ post.created_at }}</dd>
+	<dt>Wordpress URL</dt>
+	<dd><a href="{{ post.remote_url }}" target="_blank">{{ post.remote_url }}</a></dd>
+</dl>
+
+<hr />
+
+<h2>Blog Post</h2>
+<h3>{{ post.title }}</h3>
+{{ post.body|safe|linebreaks }}
+
+<hr />
+{% if post.attachments.all %}
+<h2>Attachments</h2>
+<ul>
+{% for attachment in post.attachments.all %}
+	<li>{{ attachment.file }} - <a href="{{ post.remote_url }}" target="_blank">{{ post.remote_url }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

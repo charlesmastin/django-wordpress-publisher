@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	
+	<div class="line">
+		<div class="unit size2of4">
+			<h2>Post Basics</h2>
+			<ul class="fields">
+				<li>
+					{{ form.title.errors }}
+					{{ form.title.label_tag }}
+					{{ form.title }}
+				</li>
+				<li>
+					{{ form.body.errors }}
+					{{ form.body.label_tag }}
+					{{ form.body }}
+				</li>
+				<li>
+					{{ form.email.errors }}
+					{{ form.email.label_tag }}
+					{{ form.email }}
+				</li>
+			</ul>
+		</div>
+		
+		<div class="unit size1of4 slim categories">
+			{% if WORDPRESS.ALLOW_CATEGORIES %}
+			{% block categories %}
+			<h2>Categories</h2>
+			{{ form.categories|safe }}
+			{% endblock %}
+			{% endif %}
+		</div>
+	
+		<div class="unit size1of4 slim">
+			{% if WORDPRESS.ALLOW_FILES %}
+			{% block attachments %}
+			<h2>Attachments</h2>
+			<ul class="attachments">
+				<li><input type="file" name="attachments" /><a href="#">Remove</a></li>
+			</ul>
+			<a href="#" class="another">Add Another</a>
+			{% endblock %}
+			{% endif %}
+			
+			{% if WORDPRESS.ALLOW_TAGS %}
+			{% block tags %}
+			<h2>Tags</h2>
+			{{ form.tags|safe }}
+			{% endblock %}
+			{% endif %}
+			
+		</div>
+	</div>
+	<input type="submit" value="Submit your post" id="submit" />
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(function(){
+	$('form input, form textarea').labelify({labelledClass:'form-inactive'});
+	{% if WORDPRESS.ALLOW_FILES %}
+	$('a.another').click(function(){
+		if($('ul.attachments li').length < {{ WORDPRESS.MAX_FILES }}){
+			$('ul.attachments').append('<li><input type="file" name="attachments" /><a href="#">Remove</a></li>');
+		}else {
+			alert('Max {{ WORDPRESS.MAX_FILES }} attachments');
+		}
+		return false;
+	});
+	$('ul.attachments li a').live('click', function(){
+		$(this).parent().remove();
+		return false;
+	});
+	{% endif %}
+});
+</script>
+{% endblock %}

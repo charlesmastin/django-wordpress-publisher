@@ -1,0 +1,41 @@
+This is an app built to allow remote publishing of Wordpress posts via the XML-RPC using python instead of php.
+
+-------------------------------------------------------------------------------
+requirements.txt
+-------------------------------------------------------------------------------
+django
+south
+django-extensions
+-e svn+http://python-blogger.googlecode.com/svn/trunk/pyblog/#egg=pyblog
+
+-------------------------------------------------------------------------------
+settings.py
+-------------------------------------------------------------------------------
+
+You will need a database backend to store things while email based users are being authorized.
+
+The following settings are all required to app
+
+WORDPRESS = {
+    'BASE_URL': 'http://mywordpressdomain.com',
+    'RPC_URL': 'http://mywordpressdomain.com/xmlrpc.php',
+    'USER': 'apiuser',
+    'PASSWORD': 'password',
+    'AUTOPUBLISH': False,
+    'ALLOW_CATEGORIES': True,
+    'ALLOW_TAGS': True,
+    'ALLOW_FILES': True,
+    'MAX_FILES': 5,
+    'FROM_EMAIL': 'My Blog Email Bot <bot@mywordpressdomain.com>',
+    'ADMIN_EMAIL': 'admin@wordpressdomain.com',
+    'ADMIN_NAME': 'Admin Admin',
+    'AUTH': {
+        'default': {
+            'METHOD': 'email',
+            'VALID_DOMAINS': ('mywordpressdomain.com', )
+        }
+    }
+}
+
+TEMPLATE_CONTEXT_PROCESSORS += 'publisher.context_processors.wordpress'
+

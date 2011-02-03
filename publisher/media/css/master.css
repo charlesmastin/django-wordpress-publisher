@@ -1,0 +1,119 @@
+/* ----------------------------------------------------------------------------
+Styles
+---------------------------------------------------------------------------- */
+html {
+	background: #ddd;
+/*	background: -webkit-gradient(linear, center top, center bottom, from(#ccc), to(#ddd));*/
+}
+body {
+	padding: 20px;
+}
+
+a {
+	color: #000;
+}
+
+#page {
+
+}
+
+h2 {
+	font-size: 18px;
+	font-weight: bold;
+	margin-top: 20px;
+	padding-bottom: 5px;
+}
+
+form ul.fields {
+	
+}
+
+form ul.fields label {
+	display: block;
+}
+
+form ul.fields > li {
+	margin-bottom: 20px;
+}
+
+form input, form textarea {
+	width: 600px;
+	padding: 10px;
+	font-size: 18px;
+}
+
+form input[type="checkbox"] {
+	width: 20px;
+/*	padding: 0px;*/
+}
+
+form .form-inactive {
+	color: #ccc;
+}
+
+ul.errorlist {
+/*	padding: 10px;*/
+	color: #F10;
+}
+
+ul.attachments {
+	margin-bottom: 20px;
+}
+
+ul.attachments li {
+	padding: 0px;
+	clear: both;
+	margin-bottom: 10px;
+/*	overflow: auto;*/
+}
+
+ul.attachments li input {
+	display: inline;
+	font-size: 14px;
+	padding: 0px;
+	margin-bottom: 2px;
+}
+
+ul.attachments li a {
+	display: inline;
+	color: #F10;
+}
+
+.unit.size2of4 {
+	margin-right: 20px;
+}
+
+.unit.slim {
+	width: 160px;
+	margin-right: 20px;
+}
+
+.categories ul li {
+	margin-bottom: 3px;
+}
+
+.messages {
+	margin-top: 20px;
+	font-weight: bold;
+	padding: 10px;
+	border: 2px solid #333;
+	background: #fff;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+}
+
+.messages .success {
+	color: #51C41C;
+}
+
+.messages .error {
+	color: #F10;
+}
+
+#submit {
+	width: 200px;
+	margin: 20px 0px 20px 0px;
+}
+#footer {
+	margin-top: 20px;
+}

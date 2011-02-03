@@ -1,0 +1,4 @@
+django
+south
+django-extensions
+-e svn+http://python-blogger.googlecode.com/svn/trunk/pyblog/#egg=pyblog
