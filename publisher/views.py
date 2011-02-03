@@ -48,7 +48,7 @@ def post(request):
             
             # add message to the messages framework and redirect to prevent duplicate submission
             messages.success(request, 'To confirm your submission, please follow the instructions in your email (sent from %s).' % settings.WORDPRESS['FROM_EMAIL'])
-            return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect(reverse('publisher_index'))
         else:
             # likely report errors
             pass
@@ -72,14 +72,14 @@ def authorize(request, code):
             auth.status = 'processed'
             auth.save()
             messages.success(request, 'Your blog post has been sent on to the editorial team.')
-            return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect(reverse('publisher_index'))
         else:
             messages.error(request, mark_safe('There were problems submitting your post, please contact <a href="mailto:%s?subject=Blog Publisher Error-[id %s]">%s</a> for assistance' % ( settings.WORDPRESS['ADMIN_EMAIL'], post.id, settings.WORDPRESS['ADMIN_NAME'] )))
             auth.status = 'error'
             auth.save()
     except Authorization.DoesNotExist:
         messages.error(request, 'Authorization is invalid or the post has already been submitted.')
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('publisher_index'))
     
     return render_to_response('authorize.html', {
     

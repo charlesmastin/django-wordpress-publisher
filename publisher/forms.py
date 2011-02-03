@@ -22,7 +22,7 @@ class PostForm(forms.ModelForm):
         self.fields['tags'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[], required=False)
         
         categories = []
-        
+                
         try:
             value = KeyStore.objects.get(key='blog_categories', updated_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1))
             categories = json.loads(value.value)
@@ -41,6 +41,27 @@ class PostForm(forms.ModelForm):
         
         for category in categories:
             self.fields['categories'].choices.append((category['categoryName'], category['categoryName']))
+        
+        tags = []
+                
+        try:
+            value = KeyStore.objects.get(key='blog_tags', updated_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1))
+            tags = json.loads(value.value)
+        except KeyStore.DoesNotExist:
+            blog = pyblog.WordPress(settings.WORDPRESS['RPC_URL'], settings.WORDPRESS['USER'], settings.WORDPRESS['PASSWORD'])
+            tags = blog.get_tags()
+            value = json.dumps(tags)
+            
+            try:
+                key = KeyStore.objects.get(key='blog_tags')
+                key.value = value
+                key.save()
+            except KeyStore.DoesNotExist:
+                key = KeyStore(key='blog_tags', value=value)
+                key.save()
+        
+        for tag in tags:
+            self.fields['tags'].choices.append((tag['name'], tag['name']))
     
     class Meta:
         model = Post

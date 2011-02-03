@@ -28,6 +28,13 @@ def transfer_post(post_id):
         pass
     if len(categories):
         content['categories'] = categories
+    
+    if len(post.tags):
+        content['mt_keywords'] = ', '.join(ast.literal_eval(post.tags))
+    
+    if len(post.excerpt):
+        content['mt_excerpt'] = post.excerpt
+    
     try:
         new_post = blog.new_post(content, False)
         post.status = 'processed'

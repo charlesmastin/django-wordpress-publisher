@@ -1,7 +1,7 @@
 {% extends "base_email.html" %}
 {% block content %}
 <p>Please verify the following blogpost to complete your submission.</p>
-<p><a href="http://{{ site }}/authorize/{{ code }}/" target="_blank">Verify and complete this submission</a></p>
+<p><a href="http://{{ site }}{% url publisher_authorize code=code %}" target="_blank">Verify and complete this submission</a></p>
 <hr />
 <h3>{{ post.title }}</h3>
 {{ post.body|safe|linebreaks }}

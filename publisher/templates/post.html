@@ -18,6 +18,13 @@
 					{{ form.body.label_tag }}
 					{{ form.body }}
 				</li>
+				{% if WORDPRESS.ALLOW_EXCERPT %}
+				<li>
+					{{ form.excerpt.errors }}
+					{{ form.excerpt.label_tag }}
+					{{ form.excerpt }}
+				</li>
+				{% endif %}
 				<li>
 					{{ form.email.errors }}
 					{{ form.email.label_tag }}
