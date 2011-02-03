@@ -28,11 +28,12 @@ class Post(models.Model):
     status = models.CharField(max_length=40, choices=STATUSES, default='new')
     title = models.CharField(max_length=255)
     body = models.TextField()
-    excerpt = models.TextField(blank=True)
-    email = models.EmailField()
-    categories = models.TextField(blank=True)
-    tags = models.TextField(blank=True)
-    remote_url = models.CharField(max_length=255, blank=True, null=True)
+    excerpt = models.TextField(blank=True, default='')
+    email = models.EmailField(blank=True, default='')
+    wordpress_username = models.CharField(max_length=255, blank=True, default='')
+    categories = models.TextField(blank=True, default='')
+    tags = models.TextField(blank=True, default='')
+    remote_url = models.CharField(max_length=255, blank=True, default='')
     
     class Meta:
         ordering = ['created_at']

@@ -18,10 +18,8 @@ def post(request):
     
     if request.POST:
         if form.is_valid():
-            # save into db, ehh
             post = form.save()
             
-            # check for attachments?
             if request.FILES:
                 for f in request.FILES.getlist('attachments'):
                     a = Attachment()
@@ -29,30 +27,54 @@ def post(request):
                     a.file.save(f.name, f)
                     a.save()
             
-            # save an authorization
-            auth = Authorization()
-            auth.post = post
-            auth.save()
+            # wordpress auth
+            try:
+                settings.WORDPRESS['AUTH']['wordpress']
+                if form.cleaned_data['wordpress_username'] and form.cleaned_data['wordpress_password']:
+                    # process and return now
+                    if transfer_post(post.id, form.cleaned_data['wordpress_username'], form.cleaned_data['wordpress_password']):
+                        messages.success(request, 'Your blog post has been sent on to the editorial team.')
+                    else:
+                        messages.error(request, mark_safe('There were problems submitting your post, please contact <a href="mailto:%s?subject=Blog Publisher Error-[id %s]">%s</a> for assistance' % ( settings.WORDPRESS['ADMIN_EMAIL'], post.id, settings.WORDPRESS['ADMIN_NAME'] )))
+                    return HttpResponseRedirect(reverse('publisher_index'))
+            except KeyError:
+                pass
             
-            # send authorization email
-            html_content = render_to_string('authorize_email.html', {
-                'post': post,
-                'site': request.get_host(),
-                'MEDIA_URL': settings.MEDIA_URL,
-                'code': auth.code,
-            })
+            # email auth
+            try:
+                settings.WORDPRESS['AUTH']['email']
+                if form.cleaned_data['email']:
+                    # save an authorization
+                    auth = Authorization()
+                    auth.post = post
+                    auth.save()
+                    
+                    # send authorization email
+                    html_content = render_to_string('authorize_email.html', {
+                        'post': post,
+                        'site': request.get_host(),
+                        'MEDIA_URL': settings.MEDIA_URL,
+                        'code': auth.code,
+                    })
+                    
+                    send_email('Authorize Blog Post', html_content, [post.email])
+                    
+                    # at this point, we could also notify admin team, and they could authorize it, but it would still need to be sent over the WebBlog api
+                    
+                    # add message to the messages framework and redirect to prevent duplicate submission
+                    messages.success(request, 'To confirm your submission, please follow the instructions in your email (sent from %s).' % settings.WORDPRESS['FROM_EMAIL'])
+                    return HttpResponseRedirect(reverse('publisher_index'))
+            except KeyError:
+                pass
+            # anonymous auth
             
-            send_email('Authorize Blog Post', html_content, [post.email])
             
-            # at this point, we could also notify admin team, and they could authorize it, but it would still need to be sent over the WebBlog api
-            
-            # add message to the messages framework and redirect to prevent duplicate submission
-            messages.success(request, 'To confirm your submission, please follow the instructions in your email (sent from %s).' % settings.WORDPRESS['FROM_EMAIL'])
-            return HttpResponseRedirect(reverse('publisher_index'))
         else:
-            # likely report errors
-            pass
-        
+            messages.error(request, 'There were errors processing your submission')
+            import pdb
+            pdb.set_trace()
+            return HttpResponseRedirect(reverse('publisher_index'))
+    
     return render_to_response('post.html', {
         'form': form,
     }, context_instance=RequestContext(request))

@@ -30,12 +30,23 @@ WORDPRESS = {
     'ADMIN_EMAIL': 'admin@wordpressdomain.com',
     'ADMIN_NAME': 'Admin Admin',
     'AUTH': {
-        'default': {
-            'METHOD': 'email',
-            'VALID_DOMAINS': ('mywordpressdomain.com', )
-        }
+        'email': {
+            'VALID_DOMAINS': ('mywordpressdomain.com', 'anotherdomain.com')
+        },
+        # uncomment to enable 'wordpress': { },
+        # uncomment to enable 'anonymous': { },
     }
 }
 
 TEMPLATE_CONTEXT_PROCESSORS += 'publisher.context_processors.wordpress'
 
+AUTH
+
+#anonymous
+straight submission via apiuser - useful if deployment already requires some form of auth
+
+#email
+requires valid email verfication (optionally, matching TLDs)
+
+#wordpress
+requires valid wordpress user/password (able to write posts and add files)

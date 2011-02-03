@@ -13,12 +13,18 @@ import pyblog
 
 from publisher.models import Post, Attachment
 
-def transfer_post(post_id):
+def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
+    wp_user = settings.WORDPRESS['USER']
+    if wordpress_user:
+        wp_user = wordpress_user
+    wp_pass = settings.WORDPRESS['PASSWORD']
+    if wordpress_password:
+        wp_pass = wordpress_password
     try:
         post = Post.objects.get(pk=post_id, status='new')
     except PostDoesNotExist:
         return False
-    blog = pyblog.WordPress(settings.WORDPRESS['RPC_URL'], settings.WORDPRESS['USER'], settings.WORDPRESS['PASSWORD'])
+    blog = pyblog.WordPress(settings.WORDPRESS['RPC_URL'], wp_user, wp_pass)
     
     content = {'title': post.title, 'description': post.body}
     categories = []

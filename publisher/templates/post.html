@@ -25,11 +25,28 @@
 					{{ form.excerpt }}
 				</li>
 				{% endif %}
+				{% for key, value in WORDPRESS.AUTH.items %}
+				{% if key == 'wordpress' %}
+				<li>
+					{{ form.wordpress_username.errors }}
+					{{ form.wordpress_username.label_tag }}
+					{{ form.wordpress_username }}
+				</li>
+				<li>
+					{{ form.wordpress_password.errors }}
+					{{ form.wordpress_password.label_tag }}
+					{{ form.wordpress_password }}
+				</li>
+				{% endif %}
+				{% if key == 'email' %}
 				<li>
 					{{ form.email.errors }}
 					{{ form.email.label_tag }}
 					{{ form.email }}
 				</li>
+				{% endif %}
+				{% endfor %}
+				
 			</ul>
 		</div>
 		
