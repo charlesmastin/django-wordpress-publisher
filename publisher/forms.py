@@ -38,6 +38,9 @@ class PostForm(forms.ModelForm):
             except KeyStore.DoesNotExist:
                 key = KeyStore(key='blog_categories', value=value)
                 key.save()
+        
+        for category in categories:
+            self.fields['categories'].choices.append((category['categoryName'], category['categoryName']))
     
     class Meta:
         model = Post
