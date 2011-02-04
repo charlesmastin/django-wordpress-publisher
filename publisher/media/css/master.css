@@ -63,8 +63,25 @@ ul.attachments {
 ul.attachments li {
 	padding: 0px;
 	clear: both;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
+	margin-top: -15px;
+	font-size: 11px;
 /*	overflow: auto;*/
+}
+
+ul.attachments li span.details {
+	display: none;
+}
+
+ul.attachments li span.handle {
+	display: inline-block;
+	background-image: url(../img/reorder.png);
+	width: 15px;
+	height: 10px;
+	cursor: move !important;
+	position: relative;
+	left: -20px;
+	top: 18px;
 }
 
 ul.attachments li input {
@@ -88,8 +105,13 @@ ul.attachments li a {
 	margin-right: 20px;
 }
 
-.categories ul li {
+.categories ul li,
+.tags ul li {
 	margin-bottom: 3px;
+}
+
+.tags ul li {
+	font-size: 11px;
 }
 
 .messages {

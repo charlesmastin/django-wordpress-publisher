@@ -11,7 +11,19 @@ STATUSES = (
     ('pending', 'pending'),
     ('processed', 'processed'),
     ('invalid', 'invalid'),
-    ('error', 'error')
+    ('error', 'error'),
+)
+
+POSITIONS = (
+    ('top', 'body top'),
+    ('bottom', 'body bottom'),
+)
+
+ALIGNMENTS = (
+    ('alignnone', 'none'),
+    ('alignleft', 'float left'),
+    ('aligncenter', 'center'),
+    ('alignright', 'float right'),
 )
 
 class KeyStore(models.Model):
@@ -46,7 +58,9 @@ class Attachment(models.Model):
     status = models.CharField(max_length=40, choices=STATUSES, default='new')
     file = models.FileField(upload_to='uploads/attachments/')
     post = models.ForeignKey('publisher.Post', related_name='attachments')
-    remote_url = models.CharField(max_length=255, blank=True, null=True)
+    remote_url = models.CharField(max_length=255, blank=True, default='')
+    position = models.CharField(max_length=255, choices=POSITIONS, blank=True, default='')
+    align = models.CharField(max_length=255, choices=ALIGNMENTS, blank=True, default='')
     
     class Meta:
         ordering = ['created_at']
@@ -54,7 +68,7 @@ class Attachment(models.Model):
     def __unicode__(self):
         return '%s' % self.file
 
-# used when settings.WORDPRESS['AUTH']['default']['METHOD'] == 'EMAIL'
+# used when settings.WORDPRESS['AUTH']['email'] exists
 class Authorization(models.Model):
     created_at = CreationDateTimeField()
     status = models.CharField(max_length=40, choices=STATUSES, default='new')

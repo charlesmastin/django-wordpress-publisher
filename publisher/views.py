@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from publisher.forms import PostForm
-from publisher.models import Authorization, Attachment
+from publisher.models import Authorization, Attachment, ALIGNMENTS, POSITIONS
 from publisher.tasks import transfer_post, send_email
 
 def post(request):
@@ -21,10 +21,14 @@ def post(request):
             post = form.save()
             
             if request.FILES:
-                for f in request.FILES.getlist('attachments'):
+                positions = request.POST.getlist('positions')
+                alignments = request.POST.getlist('alignments')
+                for i, f in enumerate(request.FILES.getlist('attachments')):
                     a = Attachment()
                     a.post = post
                     a.file.save(f.name, f)
+                    a.position = positions[i]
+                    a.alignment = alignments[i]
                     a.save()
             
             # wordpress auth
@@ -71,11 +75,11 @@ def post(request):
             
         else:
             messages.error(request, 'There were errors processing your submission')
-            import pdb
-            pdb.set_trace()
             return HttpResponseRedirect(reverse('publisher_index'))
     
     return render_to_response('post.html', {
+        'ALIGNMENTS': ALIGNMENTS,
+        'POSITIONS': POSITIONS,
         'form': form,
     }, context_instance=RequestContext(request))
 

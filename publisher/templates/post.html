@@ -50,18 +50,22 @@
 			</ul>
 		</div>
 		
-		<div class="unit size1of4 slim categories">
+		<div class="unit size1of4 slim">
 			{% if WORDPRESS.ALLOW_CATEGORIES %}
 			{% block categories %}
 			<h2>Categories</h2>
+			<div class="categories">
 			{{ form.categories|safe }}
+			</div>
 			{% endblock %}
 			{% endif %}
 			
 			{% if WORDPRESS.ALLOW_TAGS %}
 			{% block tags %}
 			<h2>Tags</h2>
+			<div class="tags">
 			{{ form.tags|safe }}
+			</div>
 			{% endblock %}
 			{% endif %}
 		</div>
@@ -69,9 +73,27 @@
 		<div class="unit size1of4 slim">
 			{% if WORDPRESS.ALLOW_FILES %}
 			{% block attachments %}
-			<h2>Attachments</h2>
+			<h2>Images</h2>
 			<ul class="attachments">
-				<li><input type="file" name="attachments" /><a href="#">Remove</a></li>
+				<li>
+					<span class="handle"></span>
+					<input type="file" name="attachments" />
+					<span class="details">
+					<label>Position
+					<select name="positions" class="position">
+						{% for option in POSITIONS %}
+						<option value="{{ option.0 }}">{{ option.1 }}</option>
+						{% endfor %}
+					</select></label>
+					<label>Alignment
+					<select name="alignments" class="alignment">
+						{% for option in ALIGNMENTS %}
+						<option value="{{ option.0 }}">{{ option.1 }}</option>
+						{% endfor %}
+					</select></label>
+					</span>
+					<a href="#">Remove</a>
+				</li>
 			</ul>
 			<a href="#" class="another">Add Another</a>
 			{% endblock %}
@@ -88,9 +110,13 @@
 $(function(){
 	$('form input, form textarea').labelify({labelledClass:'form-inactive'});
 	{% if WORDPRESS.ALLOW_FILES %}
+	$('ul.attachments').sortable({ handle: 'span.handle' });
+	$('ul.attachments input[type="file"]').live('change', function(){
+		$(this).next().css({'display': 'block'});
+	});
 	$('a.another').click(function(){
 		if($('ul.attachments li').length < {{ WORDPRESS.MAX_FILES }}){
-			$('ul.attachments').append('<li><input type="file" name="attachments" /><a href="#">Remove</a></li>');
+			$('ul.attachments').append('<li><span class="handle"></span><input type="file" name="attachments" /><span class="details"><label>Position<select name="positions" class="position">{% for option in POSITIONS %}<option value="{{ option.0 }}">{{ option.1 }}</option>{% endfor %}</select></label><label>Alignment<select name="alignments" class="alignment">{% for option in ALIGNMENTS %}<option value="{{ option.0 }}">{{ option.1 }}</option>{% endfor %}</select></label></span><a href="#">Remove</a></li>');
 		}else {
 			alert('Max {{ WORDPRESS.MAX_FILES }} attachments');
 		}

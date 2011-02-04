@@ -96,13 +96,14 @@ class PostForm(forms.ModelForm):
     def clean_email(self):
         data = self.cleaned_data['email']
         # whitelisting, we could blacklist too
-        try:
-            settings.WORDPRESS['AUTH']['email']['VALID_DOMAINS']
-            tA = data.split('@')
-            if tA[1] not in settings.WORDPRESS['AUTH']['email']['VALID_DOMAINS']:
-                raise forms.ValidationError('You must use a valid email address')
-        except KeyError:
-            pass
+        if len(data):
+            try:
+                settings.WORDPRESS['AUTH']['email']['VALID_DOMAINS']
+                tA = data.split('@')
+                if tA[1] not in settings.WORDPRESS['AUTH']['email']['VALID_DOMAINS']:
+                    raise forms.ValidationError('You must use a valid email address')
+            except KeyError:
+                pass
         return data
     
 

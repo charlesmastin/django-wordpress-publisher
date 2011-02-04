@@ -10,6 +10,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 import pyblog
+from PIL import Image
 
 from publisher.models import Post, Attachment
 
@@ -41,15 +42,17 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
     if len(post.excerpt):
         content['mt_excerpt'] = post.excerpt
     
+    publish = False
     try:
-        new_post = blog.new_post(content, False)
-        post.status = 'processed'
-        post.remote_url = '%s/wp-admin/post.php?post=%s&action=edit' % (settings.WORDPRESS['BASE_URL'], new_post)
-        post.save()
-    except:
-        post.status = 'error'
-        post.save()
-        return False
+        if settings.WORDPRESS['AUTO_PUBLISH']:
+            content['post_status'] = 'publish'
+            publish = True
+    except KeyError:
+        pass
+    
+    # crude way to handle extra content on top and bottom of body (images)
+    body_top_extra = []
+    body_bottom_extra = []
     
     if post.attachments:
         for attachment in post.attachments.all():
@@ -70,12 +73,50 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
                     }
                 )
                 attachment.remote_url = remote_attachment['url']
+                
+                attachment_html = ''
+                
+                try:
+                    # we could implement some validation, thanks django source fields.py, but we'll skip for now. ah, the joy of too many options
+                     attachment_image = Image.open(attachment.file.file)
+                     attachment_html = '<a href="%s"><img class="%s size-full" title="%s" src="%s" alt="" width="%s" height="%s"></a>' % ( 
+                        attachment.remote_url, attachment.align, os.path.basename(attachment.file.name), attachment.remote_url, attachment_image.size[0], attachment_image.size[1]
+                     )
+                except ImportError:
+                    raise
+                except Exception:
+                    # we're something else, like a pdf, just make a link
+                    attachment_html = '<a href="%s">%s</a>' % (attachment.remote_url, os.path.basename(attachment.file.name))
+                
+                if attachment.position == 'top':
+                    body_top_extra.append(attachment_html)
+                
+                if attachment.postition == 'bottom':
+                    body_bottom_extra.append(attachment_html)
+                
                 attachment.status = 'processed'
                 attachment.save()
             except:
                 attachment.status = 'error'
                 attachment.save()
-            
+    
+    try:
+        
+        if len(body_top_extra):
+            content['description'] = '%s%s' % ('<br />'.join(body_top_extra), content['description'])
+        
+        if len(body_bottom_extra):
+            content['description'] = '%s<br />%s' % (content['description'], '<br />'.join(body_bottom_extra))
+        
+        new_post = blog.new_post(content, publish)
+        post.status = 'processed'
+        post.remote_url = '%s/wp-admin/post.php?post=%s&action=edit' % (settings.WORDPRESS['BASE_URL'], new_post)
+        post.save()
+    except:
+        post.status = 'error'
+        post.save()
+        return False
+    
     
     # send an email to the admins
     html_content = render_to_string('team_email.html', {
