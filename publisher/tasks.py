@@ -75,12 +75,9 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
                 
                 attachment_html = ''
                 
-                #PIL FAIL 1.1.7 and 1.1.6 on my local!
-                #if mimetype in ['image/jpeg', 'image/png', 'image/gif']:
-                
                 try:
                     # we could implement some validation, thanks django source fields.py, but we'll skip for now. ah, the joy of too many options
-                    attachment_image = Image.open(attachment.file.file)
+                    attachment_image = Image.open(attachment.file.path)
                     attachment_html = '<a href="%s"><img class="%s size-full" title="%s" src="%s" alt="" width="%s" height="%s"></a>' % ( 
                         attachment.remote_url, attachment.align, os.path.basename(attachment.file.name), attachment.remote_url, attachment_image.size[0], attachment_image.size[1]
                     )
