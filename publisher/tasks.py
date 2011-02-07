@@ -50,7 +50,6 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
     except KeyError:
         pass
     
-    # crude way to handle extra content on top and bottom of body (images)
     body_top_extra = []
     body_bottom_extra = []
     
@@ -76,12 +75,15 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
                 
                 attachment_html = ''
                 
+                #PIL FAIL 1.1.7 and 1.1.6 on my local!
+                #if mimetype in ['image/jpeg', 'image/png', 'image/gif']:
+                
                 try:
                     # we could implement some validation, thanks django source fields.py, but we'll skip for now. ah, the joy of too many options
-                     attachment_image = Image.open(attachment.file.file)
-                     attachment_html = '<a href="%s"><img class="%s size-full" title="%s" src="%s" alt="" width="%s" height="%s"></a>' % ( 
+                    attachment_image = Image.open(attachment.file.file)
+                    attachment_html = '<a href="%s"><img class="%s size-full" title="%s" src="%s" alt="" width="%s" height="%s"></a>' % ( 
                         attachment.remote_url, attachment.align, os.path.basename(attachment.file.name), attachment.remote_url, attachment_image.size[0], attachment_image.size[1]
-                     )
+                    )
                 except ImportError:
                     raise
                 except Exception:
@@ -101,13 +103,6 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
                 attachment.save()
     
     try:
-        
-        if len(body_top_extra):
-            content['description'] = '%s%s' % ('<br />'.join(body_top_extra), content['description'])
-        
-        if len(body_bottom_extra):
-            content['description'] = '%s<br />%s' % (content['description'], '<br />'.join(body_bottom_extra))
-        
         new_post = blog.new_post(content, publish)
         post.status = 'processed'
         post.remote_url = '%s/wp-admin/post.php?post=%s&action=edit' % (settings.WORDPRESS['BASE_URL'], new_post)
@@ -117,6 +112,23 @@ def transfer_post(post_id, wordpress_user=None, wordpress_password=None):
         post.save()
         return False
     
+    # crude way to handle extra content on top and bottom of body (images)
+    
+    
+    # ad post first, then mw.editPost
+    
+    
+    
+    if post.attachments:
+        if len(body_top_extra):
+            content['description'] = '%s<br />%s' % ('<br />'.join(body_top_extra), content['description'])
+        
+        if len(body_bottom_extra):
+            content['description'] = '%s<br />%s' % (content['description'], '<br />'.join(body_bottom_extra))
+        try:
+            update_post = blog.edit_post(new_post, content, publish)
+        except:
+            return False
     
     # send an email to the admins
     html_content = render_to_string('team_email.html', {
