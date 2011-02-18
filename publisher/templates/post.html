@@ -17,6 +17,10 @@
 					{{ form.body.errors }}
 					{{ form.body.label_tag }}
 					{{ form.body }}
+					<ul class="toolbar">
+						<li><a href="#" class="link" title="Select text to make a link first">Insert Link</a></li>
+						<li><a href="#" class="remove-link" title="Select text to remove link first">Remove Link</a></li>
+					</ul>
 				</li>
 				{% if WORDPRESS.ALLOW_EXCERPT %}
 				<li>
@@ -106,6 +110,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/selection.js" ></script>
 <script type="text/javascript">
 $(function(){
 	$('form input, form textarea').labelify({labelledClass:'form-inactive'});
@@ -127,6 +132,24 @@ $(function(){
 		return false;
 	});
 	{% endif %}
+	
+	
+	$('a.link').click(function(){
+		var reply = prompt('URL', "http://")
+		wrap_selection('id_body', '<a href="'+reply+'">','</a>');
+	});
+	$('a.remove-link').click(function(){
+		var sel = get_selection('id_body');
+		if(sel.text != ''){
+			replace_selection('id_body', get_selection('id_body').text.replace(/(<([^>]+)>)/ig,""));
+		}else {
+			var answer = confirm('Nothing selected, remove all links?');
+			if(answer){
+				$('#id_body').text($('#id_body').val().replace(/(<([^>]+)>)/ig,""));
+			}
+		}
+	});
+
 });
 </script>
 {% endblock %}
