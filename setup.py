@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-wordpress-publisher',
-    version='0.2.1',
+    version='0.2.2',
     description='Remotely publish to your Wordpress blog via the XML-RPC from your Django website',
     author='Charles Mastin',
     author_email='charles@bricksf.com',
