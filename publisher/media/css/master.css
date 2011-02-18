@@ -58,6 +58,12 @@ ul.errorlist {
 
 ul.toolbar li {
 	display: inline;
+	font-size: 11px;
+	margin-right: 5px;
+}
+
+ul.toolbar li a {
+	color: #F10;
 }
 
 ul.attachments {
