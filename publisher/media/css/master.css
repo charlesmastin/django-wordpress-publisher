@@ -58,6 +58,12 @@ ul.errorlist {
 
 ul.toolbar li {
 	display: inline;
+	font-size: 11px;
+	margin-right: 5px;
+}
+
+ul.toolbar li a {
+	color: #F10;
 }
 
 ul.attachments {
@@ -93,6 +99,7 @@ ul.attachments li input {
 	font-size: 14px;
 	padding: 0px;
 	margin-bottom: 2px;
+	width: 200px;
 }
 
 ul.attachments li a {
@@ -112,6 +119,11 @@ ul.attachments li a {
 .categories ul li,
 .tags ul li {
 	margin-bottom: 3px;
+}
+
+.categories ul li input,
+.tags ul li input {
+	padding: 0px;
 }
 
 .tags ul li {
